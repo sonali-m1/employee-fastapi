@@ -9,3 +9,8 @@ class Employee(BaseModel):
     updated_at:datetime = datetime.now().timestamp()
     is_deleted:bool = False
 
+class Department(BaseModel):
+    dep_name:str
+    created_at:datetime = datetime.now().timestamp()
+    updated_at:datetime = datetime.now().timestamp()
+    is_deleted:bool = False

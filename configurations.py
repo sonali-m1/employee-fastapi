@@ -1,10 +1,16 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+import os
+from dotenv import load_dotenv
 
-uri = "mongodb+srv://sonusemail_db_user:bvumrTHDE0PfGyoZ@employee-practice.iunxpst.mongodb.net/?retryWrites=true&w=majority&appName=employee-practice"
+load_dotenv()
+
+
+uri = os.getenv("MONGODB_URI")
 
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
 
-db = client.employee_db
-collection = db["employee_data"]
+db = client.employee_management_db
+employee_coll = db["employee_data"]
+department_coll = db["department_data"]
