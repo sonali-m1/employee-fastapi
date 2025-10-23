@@ -6,20 +6,28 @@ from database.models import Employee
 from datetime import datetime
 from services import employee_service
 
-router = APIRouter()
+router = APIRouter(tags=["Employees"])
 
-@router.get("/employees")
-def get_all_employees():
-    return employee_service.get_all_employees()
-
+# create
 @router.post("/employees")
 def create_new_employee(new_employee:Employee): 
     return employee_service.create_new_employee(new_employee)
 
+# read
+@router.get("/employees")
+def get_all_employees():
+    return employee_service.get_all_employees()
+
+@router.get("/employees/{emp_id}")
+def get_employee(emp_id):
+    return employee_service.get_employee(emp_id)
+
+# update
 @router.put("/employees/{emp_id}")
 def update_employee_department(emp_id:str, updated_emp:Employee):
     return employee_service.update_employee_department(emp_id, updated_emp)
 
+# delete
 @router.delete("/employees/{emp_id}")
 def delete_employee(emp_id:str):
     return employee_service.delete_employee(emp_id)
