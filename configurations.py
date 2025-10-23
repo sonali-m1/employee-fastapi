@@ -13,4 +13,4 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 
 db = client.employee_management_db
 employee_coll = db["employee_data"]
-department_coll = db["department_data"]
+dept_coll = db["department_data"]

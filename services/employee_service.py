@@ -1,9 +1,11 @@
 from fastapi  import APIRouter, HTTPException
+from fastapi.encoders import jsonable_encoder
 from bson.objectid import ObjectId
 from configurations import employee_coll
 from database.schemas import all_employees, individual_data
 from database.models import Employee
 from datetime import datetime
+
 
 def get_all_employees():
     data = employee_coll.find({"is_deleted":False}) # empty find() returns everything, this param makes sure only non-deleted emps are returned (soft delete feature)
@@ -13,7 +15,7 @@ def get_all_employees():
 
 def create_new_employee(new_employee:Employee): # TODO 
     try:
-        response = employee_coll.insert_one(dict(new_employee))
+        response = employee_coll.insert_one(jsonable_encoder(new_employee))
         print(response)
         return {"status_code":200, "id":str(response.inserted_id)}
     except Exception as e:
@@ -27,7 +29,7 @@ def update_employee_department(emp_id:str, updated_emp:Employee):
         if not exists:
             raise HTTPException(status_code=404, detail = f"Employee does not exist")
         updated_emp.updated_at = datetime.now().timestamp() # if exists, update its update time and then insert in employee_coll
-        response = employee_coll.update_one({"_id":id}, {"$set":dict(updated_emp)}) # use mongodb's update_one and $set to modify values of the fields of emp
+        response = employee_coll.update_one({"_id":id}, {"$set":jsonable_encoder(updated_emp)}) # use mongodb's update_one and $set to modify values of the fields of emp
         return {"status_code":200, "message":"Employee updated successfully!"} 
     except Exception as e:
         pass
@@ -40,7 +42,7 @@ def delete_employee(emp_id:str):
         if not exists:
             return HTTPException(status_code=404, detail = f"Employee does not exist")
         # response = employee_coll.delete_one({"_id":id}) # hard-delete
-        response = employee_coll.update_one({"_id":id}, {"$set":dict({"is_deleted":True})}) # use mongodb's update_one and $set to modify is_delete values. 
+        response = employee_coll.update_one({"_id":id}, {"$set":jsonable_encoder({"is_deleted":True})}) # use mongodb's update_one and $set to modify is_delete values. 
         return {"status_code":200, "message":"Employee deleted successfully!"}
     except Exception as e:
         pass
