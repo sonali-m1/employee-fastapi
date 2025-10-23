@@ -1,11 +1,19 @@
-
+from configurations import employee_coll, dept_coll
+from bson.objectid import ObjectId
 # employee
 def individual_data(employee):
+    dept_id = employee.get("dept_id")
+    dept_name = None
+    if dept_id:
+        department = dept_coll.find_one({"_id": ObjectId(dept_id), "is_deleted":False})
+        if department:
+            dept_name = department.get("dept_name")
     return {
         "id": str(employee["_id"]),
         "first_name": employee["first_name"],
         "last_name": employee["last_name"],
-        "dept_id": employee["dept_id"]
+        "dept_id": employee["dept_id"],
+        "dept_name": dept_name
     }
 
 def all_employees(employees):

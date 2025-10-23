@@ -22,6 +22,10 @@ def get_all_employees():
 def get_employee(emp_id):
     return employee_service.get_employee(emp_id)
 
+@router.get("/department/{dept_id}/employees")
+def get_employees_in_department(dept_id):
+    return employee_service.get_employees_from_department(dept_id)
+
 # update
 @router.put("/employees/{emp_id}")
 def update_employee_department(emp_id:str, updated_emp:Employee):

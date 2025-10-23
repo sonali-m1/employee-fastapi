@@ -27,7 +27,6 @@ def get_all_employees():
     data = employee_coll.find({"is_deleted":False}) # empty find() returns everything, this param makes sure only non-deleted emps are returned (soft delete feature)
     return all_employees(data) # from schemas.py to return all employees and the data we want to see
 
-# TODO implement function to get one employee
 def get_employee(emp_id):
     try:
         id = ObjectId(emp_id)
@@ -35,6 +34,15 @@ def get_employee(emp_id):
         return individual_data(employee_data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching employee: {str(e)}")
+    
+def get_employees_from_department(dept_id):
+    try:
+        id=ObjectId(dept_id)
+        employees = employee_coll.find({"dept_id":dept_id, "is_deleted":False})
+        return all_employees(employees)
+    except Exception as e:
+        print("Error fetching employees in department: ", e)
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 # UPDATE
 def update_employee_department(emp_id:str, updated_emp:Employee):

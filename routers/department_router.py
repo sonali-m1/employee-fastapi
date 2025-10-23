@@ -1,8 +1,5 @@
-from fastapi  import APIRouter, HTTPException
-from bson.objectid import ObjectId
-from configurations import dept_coll
+from fastapi  import APIRouter
 from database.models import Department
-from datetime import datetime
 from services import department_service
 
 router = APIRouter(tags=["Departments"])
