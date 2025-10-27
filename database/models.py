@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime, timezone, date
 from typing import Optional
+from enum import Enum
 
 class Employee(BaseModel):
     first_name:str
@@ -19,10 +20,17 @@ class Department(BaseModel):
 
 class Attendance(BaseModel):
     emp_id:str
-    date:date
-    status:str
-    check_in:Optional[datetime] = None
-    check_out:Optional[datetime] = None
+    date:str
+    status:AttendanceStatus
+    created_at:datetime = datetime.now(timezone.utc)
+    updated_at:datetime = datetime.now(timezone.utc)
+    is_deleted:bool = False
+
+class AttendanceStatus(str, Enum):
+    PRESENT = "Present"
+    ABSENT = "Absent"
+    LEAVE = "Leave"
+    REMOTE = "Remote"
 
 
 

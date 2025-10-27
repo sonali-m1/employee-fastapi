@@ -36,7 +36,7 @@ def get_department(dept_id):
 def increment_headcount(dept_id):
     try:
         id = ObjectId(dept_id)
-        exists = dept_coll.find_one({"_id":id, "is_deleted":False}) # make sure dep exists and is not deleted - use "_id" since that is the given object id that we are trying to get
+        exists = dept_coll.find_one({"_id":id, "is_deleted":False}) 
         if not exists:
             raise HTTPException(status_code=404, detail = f"Department does not exist")
         response = dept_coll.update_one({"_id": id}, {"$inc":{"headcount":1}, "$set":{"updated_at": datetime.now(timezone.utc)}})
@@ -48,7 +48,7 @@ def increment_headcount(dept_id):
 def decrement_headcount(dept_id):
     try:
         id = ObjectId(dept_id)
-        exists = dept_coll.find_one({"_id":id, "is_deleted":False}) # make sure dep exists and is not deleted - use "_id" since that is the given object id that we are trying to get
+        exists = dept_coll.find_one({"_id":id, "is_deleted":False})
         if not exists:
             raise HTTPException(status_code=404, detail = f"Department does not exist")
         response = dept_coll.update_one({"_id": id}, {"$inc":{"headcount":-1}, "$set":{"updated_at": datetime.now(timezone.utc)}})

@@ -6,6 +6,7 @@ from database.models import Employee, Department
 from datetime import datetime
 from routers.employee_router import router as employee_router
 from routers.department_router import router as department_router
+from routers.attendance_router import router as service_router
 
 # create app
 app = FastAPI()
@@ -18,6 +19,7 @@ def root_page():
 
 app.include_router(employee_router)
 app.include_router(department_router)
+app.include_router(service_router)
 
 
 

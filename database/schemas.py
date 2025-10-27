@@ -30,3 +30,20 @@ def all_departments(departments):
     return [individual_department(department) for department in departments]
 
 # TODO attendance
+def individual_attendance(attendance):
+    emp_id = attendance.get("emp_id")
+    if emp_id:
+        employee = employee_coll.find_one({"_id":ObjectId(emp_id), "is_deleted":False})
+        if employee:
+            name = f"{employee.get("first_name")} {employee.get("last_name")}"
+
+    return {
+        "id": str(attendance["_id"]),
+        "emp_id": str(attendance["emp_id"]),
+        "name": name,
+        "date": attendance["date"],
+        "status": attendance["status"]
+    }
+
+def all_attendance(attendance_records):
+    return [individual_attendance(attendance) for attendance in attendance_records]
