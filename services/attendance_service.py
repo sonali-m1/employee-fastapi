@@ -35,7 +35,37 @@ def get_attendance(emp_id:str, start_date:str, end_date: Optional[str] = None) -
         return all_attendance(docs)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error reading attendance: {str(e)}")
-  
+    
+
+# update
+def update_attendance(emp_id:str, date:str, status:str):
+    validate_employee(emp_id)
+    try:
+        query = {"emp_id": emp_id, "date":date, "is_deleted":False}
+        update = {"$set" : {"status":status}}
+        response = attendance_coll.update_one(query, update)
+
+        if response.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Attendance record not found")
+        return {"message":"Attendance updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating attendance: {str(e)}")
+    
+# delete
+def delete_attendance(emp_id:str, date:str):
+    validate_employee(emp_id)
+    try:
+        query = {"emp_id":emp_id, "date":date, "is_deleted":False}
+        delete = {"$set" : {"is_deleted":True}}
+        response = attendance_coll.update_one(query, delete)
+
+        if response.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Attendance record not found")
+        
+        return {"message": "Attendance deleted successfully!"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating attendance: {str(e)}")
 
 def validate_employee(emp_id:str):
     try:

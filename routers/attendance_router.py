@@ -15,3 +15,12 @@ def create_attendance(attendance:Attendance):
 @router.get("/attendance")
 def get_attendance(emp_id:str, start_date:str, end_date:Optional[str] = Query(default=None)):
     return attendance_service.get_attendance(emp_id, start_date, end_date)
+
+# update
+@router.put("/attendance/{emp_id}/{date}")
+def update_attendance(emp_id:str, date:str, status:str):
+    return attendance_service.update_attendance(emp_id, date, status)
+
+@router.delete("/attendance/{emp_id}/{date}")
+def delete_attendance(emp_id:str, date:str):
+    return attendance_service.delete_attendance(emp_id, date)
