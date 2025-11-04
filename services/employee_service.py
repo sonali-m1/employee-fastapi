@@ -5,7 +5,7 @@ from configurations import employee_coll, dept_coll
 from database.schemas import all_employees, individual_data
 from database.models import Employee
 from services.department_service import increment_headcount, decrement_headcount
-from datetime import datetime
+from datetime import datetime, timezone
 
 # CREATE
 def create_new_employee(new_employee:Employee): # TODO 
@@ -19,6 +19,8 @@ def create_new_employee(new_employee:Employee): # TODO
         increment_headcount(new_employee.dept_id)
         print(response)
         return {"status_code":200, "message":f"Employee {new_employee.first_name} {new_employee.last_name} successfully created!", "emp_id": str(response.inserted_id)}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail = f"Error is : {e}")
     
@@ -38,13 +40,26 @@ def get_employee(emp_id):
 # UPDATE
 def update_employee_department(emp_id:str, updated_emp:Employee):
     try:
+        update_data = updated_emp.model_dump(exclude_unset=True)
         # first check if employee to update (emp_id) exists
         id = ObjectId(emp_id) # parse it into object id and fetch employee with the id, if it exists itll return the emp otherwise false
         exists = employee_coll.find_one({"_id":id, "is_deleted":False}) # make sure emp exists and is not deleted - use "_id" since that is the given object id that we are trying to get
         if not exists:
             raise HTTPException(status_code=404, detail = f"Employee does not exist")
-        updated_emp.updated_at = datetime.now().timestamp() # if exists, update its update time and then insert in employee_coll
-        response = employee_coll.update_one({"_id":id}, {"$set":jsonable_encoder(updated_emp)}) # use mongodb's update_one and $set to modify values of the fields of emp
+        
+        existing_emp = Employee(**exists)
+        updated = existing_emp.model_copy(
+            update={
+                **update_data,
+                "updated_at": datetime.now(timezone.utc)
+            }
+        )
+
+        employee_coll.update_one({
+            {"_id": id},
+            {"$set": updated.model_dump()}
+        })
+
         return {"status_code":200, "message":"Employee updated successfully!"} 
     except Exception as e:
         pass

@@ -7,6 +7,7 @@ class Employee(BaseModel):
     first_name:str
     last_name:str
     dept_id:str
+    daily_salary:float = 0.0
     created_at:datetime = datetime.now(timezone.utc)
     updated_at:datetime = datetime.now(timezone.utc)
     is_deleted:bool = False

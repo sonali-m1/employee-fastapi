@@ -18,8 +18,8 @@ def get_attendance(emp_id:str, start_date:str, end_date:Optional[str] = Query(de
 
 # update
 @router.put("/attendance/{emp_id}/{date}")
-def update_attendance(emp_id:str, date:str, status:str):
-    return attendance_service.update_attendance(emp_id, date, status)
+def update_attendance(emp_id:str, date:str, updated_attendance:Attendance):
+    return attendance_service.update_attendance(emp_id, date, updated_attendance)
 
 @router.delete("/attendance/{emp_id}/{date}")
 def delete_attendance(emp_id:str, date:str):

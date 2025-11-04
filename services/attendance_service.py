@@ -38,16 +38,27 @@ def get_attendance(emp_id:str, start_date:str, end_date: Optional[str] = None) -
     
 
 # update
-def update_attendance(emp_id:str, date:str, status:str):
+def update_attendance(emp_id:str, date:str, att_update: Attendance):
     validate_employee(emp_id)
     try:
         query = {"emp_id": emp_id, "date":date, "is_deleted":False}
-        update = {"$set" : {"status":status}}
-        response = attendance_coll.update_one(query, update)
+        exists = attendance_coll.find_one(query)
 
-        if response.matched_count == 0:
+        if not exists:
             raise HTTPException(status_code=404, detail="Attendance record not found")
-        return {"message":"Attendance updated successfully"}
+        
+        existing_att = Attendance(**exists)
+        update_data = att_update.model_dump(exclude_unset=True)
+
+        updated_att = existing_att.model_copy(
+            update = {
+                **update_data,
+                "updated_at": datetime.now(timezone.utc)
+            }
+        )
+        attendance_coll.update_one(query, {"$set": updated_att.model_dump()})
+        return{"status_code": 200, "message": "Attendance updated successfully!"}
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating attendance: {str(e)}")
     
